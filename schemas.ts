@@ -62,7 +62,7 @@ export const GitLabRepositorySchema = z.object({
   http_url_to_repo: z.string().optional(),
   created_at: z.string().optional(),
   last_activity_at: z.string().optional(),
-  default_branch: z.string().optional(),
+  default_branch: z.string().nullable(),
   namespace: z
     .object({
       id: z.number(),
