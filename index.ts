@@ -147,6 +147,11 @@ const server = new Server(
   }
 );
 
+if (!process.env.GITLAB_PERSONAL_ACCESS_TOKEN) {
+  console.error("GITLAB_PERSONAL_ACCESS_TOKEN environment variable is not set");
+  process.exit(1);
+}
+
 const GITLAB_PERSONAL_ACCESS_TOKEN = process.env.GITLAB_PERSONAL_ACCESS_TOKEN;
 const GITLAB_READ_ONLY_MODE = process.env.GITLAB_READ_ONLY_MODE === "true";
 const USE_GITLAB_WIKI = process.env.USE_GITLAB_WIKI === "true";
@@ -178,7 +183,7 @@ if (HTTPS_PROXY) {
 const DEFAULT_HEADERS = {
   Accept: "application/json",
   "Content-Type": "application/json",
-  Authorization: `Bearer ${GITLAB_PERSONAL_ACCESS_TOKEN}`,
+  'PRIVATE-TOKEN': GITLAB_PERSONAL_ACCESS_TOKEN,
 };
 
 // Create a default fetch configuration object that includes proxy agents if set
@@ -459,11 +464,6 @@ function normalizeGitLabApiUrl(url?: string): string {
 
 // Use the normalizeGitLabApiUrl function to handle various URL formats
 const GITLAB_API_URL = normalizeGitLabApiUrl(process.env.GITLAB_API_URL || "");
-
-if (!GITLAB_PERSONAL_ACCESS_TOKEN) {
-  console.error("GITLAB_PERSONAL_ACCESS_TOKEN environment variable is not set");
-  process.exit(1);
-}
 
 /**
  * Utility function for handling GitLab API errors
@@ -2030,7 +2030,7 @@ async function getRepositoryTree(
     `${GITLAB_API_URL}/projects/${encodeURIComponent(options.project_id)}/repository/tree?${queryParams.toString()}`,
     {
       headers: {
-        Authorization: `Bearer ${GITLAB_PERSONAL_ACCESS_TOKEN}`,
+        'PRIVATE-TOKEN': GITLAB_PERSONAL_ACCESS_TOKEN,
         "Content-Type": "application/json",
       },
     }
